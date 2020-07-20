@@ -14,6 +14,7 @@ binary_tree_t *binary_tree_node(binary_tree_t *parent, int value)
 	if (node == NULL)
 		return (NULL);
 	node->n = value;
+	node->parent = parent;
 	node->left = NULL;
 	node->right = NULL;
 
@@ -22,14 +23,14 @@ binary_tree_t *binary_tree_node(binary_tree_t *parent, int value)
 
 	if (value == parent->n)
 	{
-		/*free(node);*/
+		free(node);
 		return (NULL);
 	}
 	if (value < parent->n)
 	{
 		if (parent->left)
 		{
-			/*free(node);*/
+			free(node);
 			return (NULL);
 		}
 		parent->left = node;
@@ -38,7 +39,7 @@ binary_tree_t *binary_tree_node(binary_tree_t *parent, int value)
 	{
 		if (parent->right)
 		{
-			/*free(node);*/
+			free(node);
 			return (NULL);
 		}
 		parent->right = node;
