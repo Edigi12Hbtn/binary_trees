@@ -18,32 +18,5 @@ binary_tree_t *binary_tree_node(binary_tree_t *parent, int value)
 	node->left = NULL;
 	node->right = NULL;
 
-	if (parent == NULL)
-		return (node);
-
-	if (value == parent->n)
-	{
-		free(node);
-		return (NULL);
-	}
-	if (value < parent->n)
-	{
-		if (parent->left)
-		{
-			free(node);
-			return (NULL);
-		}
-		parent->left = node;
-	}
-	else
-	{
-		if (parent->right)
-		{
-			free(node);
-			return (NULL);
-		}
-		parent->right = node;
-	}
-
 	return (node);
 }
