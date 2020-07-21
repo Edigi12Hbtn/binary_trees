@@ -57,11 +57,14 @@ int _pow(int base, int exp)
 }
 
 /**
- * left_nodes - function for obtain the height of a binary tree.
+ * left_nodes - This fuction checks if the nodes in the last
+ * level are as left as possible.
  *
- * @tree: pointer to the root node of the tree to measure the height.
- * @ptr_height: pointer to height variable.
- * @value: height of current branch.
+ * @tree: pointer to the root node of the tree to measure the height
+ * @height: pointer pointing to the height of the tree..
+ * @value: level of current node.
+ * @flag: -1 when last level nodes are not as left as possible,
+ * 0 or 1 otherwise..
  */
 
 void left_nodes(const binary_tree_t *tree, size_t height,
@@ -80,13 +83,13 @@ void left_nodes(const binary_tree_t *tree, size_t height,
 		}
 		if (tree->left == NULL && *flag == 1)
 			*flag = 0;
-		
+
 		if (tree->right != NULL && *flag == 0)
 		{
 			*flag = -1;
 			return;
 		}
-		if(tree->right == NULL && *flag == 1)
+		if (tree->right == NULL && *flag == 1)
 			*flag = 0;
 		return;
 	}
