@@ -21,11 +21,11 @@ void height_count(const binary_tree_t *tree, int *ptr_height, int value)
 }
 
 /**
- * print_level - function for obtain the height of a binary tree.
+ * print_level - function for print the level of a tree
  *
- * @tree: pointer to the root node of the tree to measure the height.
- * @ptr_height: pointer to height variable.
- * @value: height of current branch.
+ * @tree: pointer to the root node of the tree.
+ * @level: level to be printed.
+ * @func: function to print a node.
  */
 
 void print_level(const binary_tree_t *tree, int level, void (*func)(int))
@@ -49,7 +49,7 @@ void print_level(const binary_tree_t *tree, int level, void (*func)(int))
 /**
  * binary_tree_levelorder - function that goes through
  * a binary tree using level-order traversal
- * 
+ *
  * @tree: pointer to the root node of the tree to traverse
  * @func: pointer to a function to call for each node.
  * The value in the node must be passed as a parameter to this function.
@@ -66,7 +66,5 @@ void binary_tree_levelorder(const binary_tree_t *tree, void (*func)(int))
 	height_count(tree, &height, 0);
 
 	for (i = 0; i <= height; i++)
-	{
 		print_level(tree, i, func);
-	}
 }
