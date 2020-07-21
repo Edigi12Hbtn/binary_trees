@@ -22,8 +22,7 @@ void parent_nodes_count(const binary_tree_t *tree, size_t *ptr_parent_nodes)
 }
 
 /**
- * binary_tree_parent_nodes - function that measures
- * the number of parent nodes.
+ * binary_tree_nodes - function that measures the number of parent nodes.
  *
  * @tree: pointer to the root node of the tree to measure the parent_nodes.
  *
