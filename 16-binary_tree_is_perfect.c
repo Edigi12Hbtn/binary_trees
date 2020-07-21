@@ -39,7 +39,7 @@ void size_count(const binary_tree_t *tree, int *ptr_size)
 }
 
 /**
- * pow - function to calculate base ** exp
+ * _pow - function to calculate base ** exp
  * @base: base
  * @exp: exp
  * Return: base ** exp

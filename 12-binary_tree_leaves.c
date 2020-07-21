@@ -4,7 +4,7 @@
  * leaf_count - function for obtain the leaves of a binary tree.
  *
  * @tree: pointer to the root node of the tree to count the leaves.
- * @ptr_size: pointer to leaf count variable.
+ * @ptr_total: pointer to leaf count variable.
  */
 
 void leaf_count(const binary_tree_t *tree, size_t *ptr_total)
@@ -20,10 +20,11 @@ void leaf_count(const binary_tree_t *tree, size_t *ptr_total)
 }
 
 /**
- * binary_tree_leaves - function that counts
- * the leaves in a binary tree
+ * binary_tree_leaves - function that counts the leaves in a binary tree
  * @tree: pointer to the root node of the
  * tree to count the number of leaves
+ *
+ * Return: number of leaves
  * If tree is NULL, the function must return 0
  * A NULL pointer is not a leaf
  */
