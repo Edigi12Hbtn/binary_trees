@@ -29,6 +29,68 @@ bst_t *bst_search(const bst_t *tree, int value)
 }
 
 /**
+ * save_information_find_new_root - store information of node to
+ * be deleted and find the new node that is going to replace it (new_root).
+ *
+ * @parent: parent of node_to_delete.
+ * @left_child: left child of node_to_delete.
+ * @right_child: right child of node_to_delete.
+ * @new_root: node that is going to replace the node_to_delete.
+ * @node_to_delete: node that is going to be deleted.
+ */
+
+void save_information_find_new_root(bst_t **parent,
+				bst_t **left_child,
+				bst_t **right_child, bst_t **new_root,
+				bst_t **node_to_delete)
+{
+	*parent = (*node_to_delete)->parent;
+	*left_child = (*node_to_delete)->left;
+	*right_child = (*node_to_delete)->right;
+	*new_root = *right_child;
+	free(*node_to_delete);
+
+	while (*right_child != NULL && (*new_root)->left != NULL)
+		*new_root = (*new_root)->left;
+}
+
+/**
+ * case_right_child_null - function that manage the case where
+ * right_child is NULL.
+ *
+ * @parent: parent of node_to_delete.
+ * @left_child: left child of node_to_delete.
+ * @right_child: right child of node_to_delete.
+ * @node_to_delete: node that is going to be deleted.
+ * @root: root of the hole tree.
+ *
+ * Return: 1 if the program has to finish returning the root,
+ * 0 if not.
+ */
+
+int case_right_child_null(bst_t **parent,
+			bst_t **left_child,
+			bst_t **right_child,
+			bst_t **node_to_delete,
+			bst_t **root)
+{
+
+	if (*right_child == NULL)
+	{
+		if (*left_child != NULL)
+			(*left_child)->parent = *parent;
+		if (*parent != NULL && ((*parent)->left == *node_to_delete))
+			(*parent)->left = *left_child;
+		else if (*parent != NULL && ((*parent)->right == *node_to_delete))
+			(*parent)->right = *left_child;
+		else
+			*root = *left_child;
+		return (1);/*the program has to return (*root);*/
+	}
+		return (0);
+}
+
+/**
  * bst_remove - function that removes a node from a Binary Search Tree.
  *
  * @root: root of binary search tree.
@@ -50,29 +112,12 @@ bst_t *bst_remove(bst_t *root, int value)
 	if (node_to_delete == NULL)
 		return (NULL);
 
-	parent = node_to_delete->parent;/* NULL*/
-	left_child = node_to_delete->left; /*47*/
-	right_child = node_to_delete->right;/* 87*/
-	new_root = right_child; /*84*/
-	free(node_to_delete);
+	save_information_find_new_root(&parent, &left_child,
+				&right_child, &new_root, &node_to_delete);
 
-
-	while (right_child != NULL && new_root->left != NULL)
-			new_root = new_root->left;
-
-	if (right_child == NULL)
-	{
-		if (left_child != NULL)
-			left_child->parent = parent;
-		if (parent != NULL && (parent->left == node_to_delete))
-			parent->left = left_child;
-		else if (parent != NULL && (parent->right == node_to_delete))
-			parent->right = left_child;
-		else
-			root = left_child;
+	if (case_right_child_null(&parent, &left_child, &right_child,
+				&node_to_delete, &root))
 		return (root);
-	}
-
 	if (root == node_to_delete)
 		root = new_root;
 
@@ -90,7 +135,6 @@ bst_t *bst_remove(bst_t *root, int value)
 	new_root->left = left_child;
 	if (left_child != NULL)
 		left_child->parent = new_root;
-		
 	new_root->parent = parent;
 	if (parent != NULL && (parent->left == node_to_delete))
 		parent->left = new_root;
@@ -99,9 +143,3 @@ bst_t *bst_remove(bst_t *root, int value)
 
 	return (root);
 }
-/**
- * 1. delete node and free.
- * 2. find the most recursive left grandchild of our right tree.
- * 3. become that node the new sub-root.
- * 4. connect the right sub-tree there and then insert on its left the remain node (right of new sub-root).
- */
