@@ -52,14 +52,16 @@ avl_t *add_new_node (avl_t *parent, int value)
 void balance_sub_tree(avl_t **tree, avl_t *node, int *is_balanced)
 {
 	int balance = 0;
-	avl_t *parent_tree_to_balance = NULL;
-	avl_t *new_balanced_tree = NULL;
-	int direction;
 
 	if (tree == NULL || *tree == NULL || node == NULL || *is_balanced == 1)
 		return;
 
-	balance = binary_tree_balance((const binary_tree_t *) node);
+	if (*is_balanced == 0)
+		balance_sub_tree(tree, node->left, is_balanced);
+	if (*is_balanced == 0)
+		balance_sub_tree(tree, node->right, is_balanced);
+
+	balance = binary_tree_balance((const binary_tree_t *)node);
 	/*printf("\n\nnode-> %d, balance-> %d\n", node->n, balance);
 	if (node->left != NULL)
 		printf("    izq = %d\n", (node->left)->n);
@@ -68,39 +70,21 @@ void balance_sub_tree(avl_t **tree, avl_t *node, int *is_balanced)
 
 	if (balance > 1 || balance < -1)
 	{
+		printf("%d\n", node->n);
 		if (node == *tree)
 			*tree = binary_tree_rotate_right((binary_tree_t *)node);
 		else
 		{
-			/* save data before balancing since node */
-			parent_tree_to_balance = node->parent;
-			if (parent_tree_to_balance->left != NULL &&
-				parent_tree_to_balance->left == node)
-				direction = -1;
-			else if (parent_tree_to_balance->right != NULL &&
-					 parent_tree_to_balance->right == node)
-				direction = 1;
+			/* in case of zig zag */
 
 			/* balancing */
 			if (balance > 1)
-				new_balanced_tree = binary_tree_rotate_right((binary_tree_t *)node);
+				binary_tree_rotate_right((binary_tree_t *)node);
 			else if (balance < -1)
-				new_balanced_tree = binary_tree_rotate_left((binary_tree_t *)node);
-
-			/* connecting balanced tree */
-			new_balanced_tree->parent = parent_tree_to_balance;
-			if (direction == -1)
-				parent_tree_to_balance->left = new_balanced_tree;
-			if (direction == 1)
-				parent_tree_to_balance->right = new_balanced_tree;
+				binary_tree_rotate_left((binary_tree_t *)node);
 		}
 		*is_balanced = 1;
 	}
-
-	if (*is_balanced == 0)
-		balance_sub_tree(tree, node->left, is_balanced);
-	if (*is_balanced == 0)
-		balance_sub_tree(tree, node->right, is_balanced);
 }
 
 /**
@@ -127,7 +111,7 @@ avl_t *avl_insert(avl_t **tree, int value)
 	}
 
 	new_node = add_new_node(*tree, value);
-
+	printf("______________________________\n");
 	balance_sub_tree(tree, *tree, &balanced);
 
 	return (new_node);
