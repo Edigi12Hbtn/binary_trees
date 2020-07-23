@@ -44,31 +44,6 @@ void check_branch_node(binary_tree_t *node, int *all_right, int m, int side)
 }
 
 /**
- * check_if_bst - cheks if every node is a root of a bst.
- *
- * @current_node: current node to check.
- * @all_right: 1 if the branches are bst otherwise -1.
- */
-
-void check_if_bst(binary_tree_t *current_node, int *all_right)
-{
-	if (current_node == NULL || *all_right == -1)
-		return;
-
-	check_branch_node(current_node->right, all_right, current_node->n, 1);
-	if (*all_right != 1)
-		return;
-
-	check_branch_node(current_node->left, all_right, current_node->n, -1);
-	if (*all_right != 1)
-		return;
-	if (current_node->left)
-		check_if_bst(current_node->left, all_right);
-	if (current_node->right)
-		check_if_bst(current_node->right, all_right);
-}
-
-/**
  * height - function for obtain the height of a binary tree.
  *
  * @tree: pointer to the root node of the tree to measure the height.
@@ -124,7 +99,7 @@ int binary_tree_balance(const binary_tree_t *tree)
 }
 
 /**
- * check_branches_balance - check balance for every subtree
+ * check_balance_and_bst - check balance for every subtree
  *
  * @tree: tree
  * @all_right: flag to detect when a subtree
@@ -132,7 +107,7 @@ int binary_tree_balance(const binary_tree_t *tree)
  * has balance is more than one
  */
 
-void check_branches_balance(const binary_tree_t *tree, int *all_right)
+void check_balance_and_bst(const binary_tree_t *tree, int *all_right)
 {
 	int balance;
 
@@ -145,15 +120,24 @@ void check_branches_balance(const binary_tree_t *tree, int *all_right)
 		*all_right = -1;
 		return;
 	}
+	/* */
+	check_branch_node(tree->right, all_right, tree->n, 1);
+	if (*all_right != 1)
+		return;
 
+	check_branch_node(tree->left, all_right, tree->n, -1);
+	if (*all_right != 1)
+		return;
+
+	/* */
 	if (tree->left != NULL)
-		check_branches_balance(tree->left, all_right);
+		check_balance_and_bst(tree->left, all_right);
 
 	if (*all_right == -1)
 		return;
 
 	if (tree->right != NULL)
-		check_branches_balance(tree->right, all_right);
+		check_balance_and_bst(tree->right, all_right);
 }
 
 /**
@@ -176,12 +160,7 @@ int binary_tree_is_avl(const binary_tree_t *tree)
 	if (tree == NULL)
 		return (0);
 
-	check_if_bst((binary_tree_t *)tree, &all_right);
-
-	if (all_right != 1)
-		return (0);
-
-	check_branches_balance(tree, &all_right);
+	check_balance_and_bst(tree, &all_right);
 
 	if (all_right != 1)
 		return (0);
