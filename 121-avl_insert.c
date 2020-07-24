@@ -60,16 +60,34 @@ void height_count(const binary_tree_t *tree, size_t *ptr_height, size_t value)
 		height_count(tree->right, ptr_height, value + 1);
 }
 
-int balance_when_height_is_3(avl_t **tree, avl_t *node, int balance)
+/**
+ * balance_when_height_is_more_than_2 - balance when grandson have childrens
+ *
+ * @tree: all tree
+ * @node: pointer to the root node of the subtree to balance
+ * @balance: to know in wich direction make rotations
+ *
+ */
+void balance_when_height_is_more_than_2(avl_t **tree, avl_t *node, int balance)
 {
 	avl_t *aux = NULL;
 
-	/* if this is a zig zag, rotate the node->child */
 	if (balance > 1)
-		binary_tree_rotate_left((binary_tree_t *)node->left);
+	{
+		if (node->left->right)
+		{
+			if (node->left->right->left != NULL || node->left->right->right != NULL)
+				binary_tree_rotate_left((binary_tree_t *)node->left);
+		}
+	}
 	else if (balance < -1)
-		binary_tree_rotate_right((binary_tree_t *)node->right);
-
+	{
+		if (node->right->left)
+		{
+			if (node->right->left->left != NULL || node->right->left->right != NULL)
+				binary_tree_rotate_right((binary_tree_t *)node->right);
+		}
+	}
 	if (balance > 1)
 		aux = binary_tree_rotate_right((binary_tree_t *)node);
 	else if (balance < -1)
@@ -77,8 +95,6 @@ int balance_when_height_is_3(avl_t **tree, avl_t *node, int balance)
 
 	if (node == *tree)
 		*tree = aux;
-
-	return (0);
 }
 
 /**
@@ -108,32 +124,17 @@ void balance_sub_tree(avl_t **tree, avl_t *node, int *is_balanced)
 
 	if (balance > 1 || balance < -1)
 	{
-		height_count(*tree, &height, 0);
+		height_count(node, &height, 0);
+
 		/* when the granson don't have childrens */
-		if (height == 3)
-			balance_when_height_is_3(tree, node, balance);
-		else
+		if (height == 2)
 		{
+			/* if this is a zig zag, rotate the node->child */
 			if (balance > 1)
-			{
-				if (node->left->right)
-				{
-					if (node->left->right->left != NULL || node->left->right->right != NULL)
-					{
-						binary_tree_rotate_left((binary_tree_t *)node->left);
-					}
-				}
-			}
+				binary_tree_rotate_left((binary_tree_t *)node->left);
 			else if (balance < -1)
-			{
-				if (node->right->left)
-				{
-					if (node->right->left->left != NULL || node->right->left->right != NULL)
-					{
-						binary_tree_rotate_right((binary_tree_t *)node->right);
-					}
-				}
-			}
+				binary_tree_rotate_right((binary_tree_t *)node->right);
+
 			if (balance > 1)
 				aux = binary_tree_rotate_right((binary_tree_t *)node);
 			else if (balance < -1)
@@ -142,6 +143,9 @@ void balance_sub_tree(avl_t **tree, avl_t *node, int *is_balanced)
 			if (node == *tree)
 				*tree = aux;
 		}
+		else
+			balance_when_height_is_more_than_2(tree, node, balance);
+
 		*is_balanced = 1;
 	}
 }
@@ -156,22 +160,21 @@ void balance_sub_tree(avl_t **tree, avl_t *node, int *is_balanced)
  * Return: a pointer to the created node, or NULL on failure.
  */
 
-avl_t *avl_insert(avl_t **tree, int value)
-{
-	avl_t *new_node = NULL;
-	int balanced = 0;
-
-	if (tree == NULL)
-		return (NULL);
-
-	if (*tree == NULL)
+	avl_t *avl_insert(avl_t **tree, int value)
 	{
-		*tree = binary_tree_node(*tree, value);
-		return (*tree);
+		avl_t *new_node = NULL;
+		int balanced = 0;
+
+		if (tree == NULL)
+			return (NULL);
+
+		if (*tree == NULL)
+		{
+			*tree = binary_tree_node(*tree, value);
+			return (*tree);
+		}
+		new_node = add_new_node(*tree, value);
+		balance_sub_tree(tree, *tree, &balanced);
+
+		return (new_node);
 	}
-
-	new_node = add_new_node(*tree, value);
-	balance_sub_tree(tree, *tree, &balanced);
-
-	return (new_node);
-}
