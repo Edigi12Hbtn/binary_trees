@@ -71,23 +71,21 @@ void height_count(const binary_tree_t *tree, size_t *ptr_height, size_t value)
 void balance_when_height_is_more_than_2(avl_t **tree, avl_t *node, int balance)
 {
 	avl_t *aux = NULL;
+	int balance_subtree = 0;
 
 	if (balance > 1)
 	{
-		if (node->left->right)
-		{
-			if (node->left->right->left != NULL || node->left->right->right != NULL)
-				binary_tree_rotate_left((binary_tree_t *)node->left);
-		}
+		balance_subtree = binary_tree_balance((const binary_tree_t *)node->left);
+		if (balance_subtree < 0)
+			binary_tree_rotate_left((binary_tree_t *)node->left);
 	}
 	else if (balance < -1)
 	{
-		if (node->right->left)
-		{
-			if (node->right->left->left != NULL || node->right->left->right != NULL)
-				binary_tree_rotate_right((binary_tree_t *)node->right);
-		}
+		balance_subtree = binary_tree_balance((const binary_tree_t *)node->right);
+		if (balance_subtree > 0)
+			binary_tree_rotate_right((binary_tree_t *)node->right);
 	}
+
 	if (balance > 1)
 		aux = binary_tree_rotate_right((binary_tree_t *)node);
 	else if (balance < -1)
@@ -125,14 +123,13 @@ void balance_sub_tree(avl_t **tree, avl_t *node, int *is_balanced)
 	if (balance > 1 || balance < -1)
 	{
 		height_count(node, &height, 0);
-
 		/* when the granson don't have childrens */
 		if (height == 2)
 		{
 			/* if this is a zig zag, rotate the node->child */
-			if (balance > 1)
+			if (balance > 1 && node->left)
 				binary_tree_rotate_left((binary_tree_t *)node->left);
-			else if (balance < -1)
+			else if (balance < -1 && node->right)
 				binary_tree_rotate_right((binary_tree_t *)node->right);
 
 			if (balance > 1)
@@ -160,21 +157,24 @@ void balance_sub_tree(avl_t **tree, avl_t *node, int *is_balanced)
  * Return: a pointer to the created node, or NULL on failure.
  */
 
-	avl_t *avl_insert(avl_t **tree, int value)
+avl_t *avl_insert(avl_t **tree, int value)
+{
+	avl_t *new_node = NULL;
+	int balanced = 0;
+
+	if (tree == NULL)
+		return (NULL);
+
+	if (*tree == NULL)
 	{
-		avl_t *new_node = NULL;
-		int balanced = 0;
-
-		if (tree == NULL)
-			return (NULL);
-
-		if (*tree == NULL)
-		{
-			*tree = binary_tree_node(*tree, value);
-			return (*tree);
-		}
-		new_node = add_new_node(*tree, value);
-		balance_sub_tree(tree, *tree, &balanced);
-
-		return (new_node);
+		*tree = binary_tree_node(*tree, value);
+		return (*tree);
 	}
+	new_node = add_new_node(*tree, value);
+	if (new_node == NULL)
+		return (NULL);
+
+	balance_sub_tree(tree, *tree, &balanced);
+
+	return (new_node);
+}
