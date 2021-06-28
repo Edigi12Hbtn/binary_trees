@@ -13,6 +13,8 @@ Learning Objectives
 -   What are the different traversal methods to go through a binary tree
 -   What is a complete, a full, a perfect, a balanced binary tree
 
+![binary tree](./binary-tree-to-DLL.png)
+
 Tasks
 -----
 
